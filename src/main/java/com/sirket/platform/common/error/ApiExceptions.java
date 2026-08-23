@@ -32,6 +32,12 @@ public final class ApiExceptions {
         }
     }
 
+    public static class BadRequest extends ApiException {
+        public BadRequest(String message) {
+            super(HttpStatus.BAD_REQUEST, "BAD_REQUEST", message);
+        }
+    }
+
     public static class Conflict extends ApiException {
         public Conflict(String message) {
             super(HttpStatus.CONFLICT, "CONFLICT", message);

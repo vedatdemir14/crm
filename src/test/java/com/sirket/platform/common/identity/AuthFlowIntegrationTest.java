@@ -45,8 +45,7 @@ class AuthFlowIntegrationTest extends IntegrationTestBase {
     private ObjectMapper objectMapper;
 
     @BeforeEach
-    void setUp() {
-        userRepository.deleteAll();
+    void seedUser() {
         Role admin = roleRepository.findByName("ROLE_ADMIN").orElseThrow();
         User user = new User("vedat", "vedat@example.com", passwordEncoder.encode(PASSWORD));
         user.replaceRoles(Set.of(admin));
