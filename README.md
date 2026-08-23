@@ -1,5 +1,7 @@
 # CRM & İK Platformu
 
+[![CI](https://github.com/vedatdemir14/crm/actions/workflows/ci.yml/badge.svg)](https://github.com/vedatdemir14/crm/actions/workflows/ci.yml)
+
 Kurumsal CRM ve İK platformunun backend'i. Modüler monolit mimari, Spring Boot 4 / Java 21 / PostgreSQL.
 
 Tasarım dokümanları (SRS, mimari, veri modeli, API tasarımı, kriptografi standartları, yedekleme stratejisi)
