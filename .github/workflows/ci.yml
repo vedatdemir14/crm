@@ -27,6 +27,29 @@ jobs:
           distribution: temurin
           cache: maven
 
+      # setup-java caches ~/.m2/repository but not the Maven distribution the
+      # wrapper downloads, so cache that separately.
+      - name: Cache Maven wrapper distribution
+        uses: actions/cache@v6
+        with:
+          path: ~/.m2/wrapper
+          key: maven-wrapper-${{ hashFiles('.mvn/wrapper/maven-wrapper.properties') }}
+
+      # mvnw fetches Maven with `wget --quiet` and gives up without falling back
+      # to curl, so a single blip on Maven Central fails the whole build with no
+      # usable message. Retry, and keep the output so a real failure is readable.
+      - name: Warm up Maven wrapper
+        env:
+          MVNW_VERBOSE: 'true'
+        run: |
+          for attempt in 1 2 3; do
+            if ./mvnw -B -v; then exit 0; fi
+            echo "::warning::Maven wrapper download failed (attempt ${attempt}/3), retrying in 15s"
+            sleep 15
+          done
+          echo "::error::Maven wrapper could not be downloaded after 3 attempts"
+          exit 1
+
       # Integration tests spin up PostgreSQL via Testcontainers, which needs the
       # Docker daemon preinstalled on the runner.
       - name: Verify Docker is available
