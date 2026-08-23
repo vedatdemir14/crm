@@ -1,0 +1,79 @@
+spring:
+  application:
+    name: crm-platform
+  profiles:
+    default: dev
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/crm}
+    username: ${DB_USERNAME:crm}
+    password: ${DB_PASSWORD:crm}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+  flyway:
+    enabled: true
+    schemas: common,crm,hr
+    default-schema: common
+    create-schemas: true
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:crm}
+    password: ${RABBITMQ_PASSWORD:crm}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+app:
+  security:
+    jwt:
+      issuer: crm-platform
+      access-token-ttl: PT30M
+      refresh-token-ttl: P7D
+      # RSA keys are supplied at runtime via environment variables (PEM, PKCS#8 / X.509).
+      # When absent, an ephemeral key pair is generated at startup — dev only.
+      private-key: ${JWT_PRIVATE_KEY:}
+      public-key: ${JWT_PUBLIC_KEY:}
+    lockout:
+      max-failed-attempts: 5
+      duration: PT15M
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+logging:
+  level:
+    com.sirket.platform: DEBUG
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  jpa:
+    properties:
+      hibernate:
+        format_sql: false
+logging:
+  level:
+    com.sirket.platform: INFO
