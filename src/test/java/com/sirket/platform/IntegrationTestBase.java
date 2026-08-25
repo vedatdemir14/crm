@@ -57,6 +57,7 @@ public abstract class IntegrationTestBase {
     void resetDatabase() {
         jdbcTemplate.execute("""
                 TRUNCATE TABLE
+                    hr.payroll_records,
                     hr.leave_requests,
                     hr.leave_balances,
                     hr.public_holidays,
