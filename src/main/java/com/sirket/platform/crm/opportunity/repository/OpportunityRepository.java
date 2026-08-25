@@ -2,6 +2,7 @@ package com.sirket.platform.crm.opportunity.repository;
 
 import com.sirket.platform.crm.opportunity.domain.Opportunity;
 import com.sirket.platform.crm.opportunity.domain.OpportunityStatus;
+import java.time.Instant;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -40,6 +41,9 @@ public interface OpportunityRepository extends JpaRepository<Opportunity, UUID> 
             @Param("owner") UUID owner,
             @Param("ownerFilter") UUID ownerFilter,
             Pageable pageable);
+
+    /** Chunked read for the CSV export (FR-CRM-11); ordering keeps successive pages stable. */
+    Page<Opportunity> findByCreatedAtBetweenOrderByCreatedAtAsc(Instant from, Instant to, Pageable pageable);
 
     boolean existsByStageId(UUID stageId);
 
