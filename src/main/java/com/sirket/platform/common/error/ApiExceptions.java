@@ -44,6 +44,12 @@ public final class ApiExceptions {
         }
     }
 
+    public static class Forbidden extends ApiException {
+        public Forbidden(String message) {
+            super(HttpStatus.FORBIDDEN, "FORBIDDEN", message);
+        }
+    }
+
     public static class Unauthorized extends ApiException {
         public Unauthorized(String message) {
             super(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED", message);
