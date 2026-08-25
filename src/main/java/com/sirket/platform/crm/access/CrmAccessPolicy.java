@@ -1,4 +1,4 @@
-package com.sirket.platform.crm.contact.service;
+package com.sirket.platform.crm.access;
 
 import com.sirket.platform.common.error.ApiExceptions;
 import com.sirket.platform.common.security.CurrentUser;

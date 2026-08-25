@@ -1,7 +1,9 @@
 package com.sirket.platform.crm.contact.service;
 
 import com.sirket.platform.common.error.ApiExceptions;
+import com.sirket.platform.crm.access.CrmAccessPolicy;
 import com.sirket.platform.crm.contact.domain.Company;
+import com.sirket.platform.crm.access.CrmAccessPolicy;
 import com.sirket.platform.crm.contact.domain.Contact;
 import com.sirket.platform.crm.contact.dto.ContactDtos;
 import com.sirket.platform.crm.contact.repository.ContactRepository;
@@ -93,10 +95,14 @@ public class ContactService {
     }
 
     private Company resolveCompany(UUID companyId) {
-        return companyId == null ? null : companyService.requireExisting(companyId);
+        return companyId == null ? null : companyService.requireVisible(companyId);
     }
 
-    private Contact requireVisible(UUID id) {
+    /**
+     * Exposed for other CRM packages that link a contact onto their own records; the caller must
+     * already be allowed to see it.
+     */
+    public Contact requireVisible(UUID id) {
         Contact contact = contactRepository.findById(id)
                 .orElseThrow(() -> new ApiExceptions.NotFound("Kişi bulunamadı: " + id));
         accessPolicy.requireVisible(contact.getOwnerUserId());
