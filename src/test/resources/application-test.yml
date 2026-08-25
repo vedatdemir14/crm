@@ -3,3 +3,8 @@ spring:
     exclude:
       - org.springframework.boot.data.redis.autoconfigure.DataRedisAutoConfiguration
       - org.springframework.boot.amqp.autoconfigure.RabbitAutoConfiguration
+
+crm:
+  # Tests invoke the reminder job directly rather than waiting on (or racing) the cron trigger.
+  scheduling:
+    enabled: false

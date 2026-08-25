@@ -105,7 +105,11 @@ public class OpportunityService {
         return companyId == null ? null : companyService.requireVisible(companyId);
     }
 
-    private Opportunity requireVisible(UUID id) {
+    /**
+     * Exposed for other CRM packages that hang their own records off an opportunity; the caller
+     * must already be allowed to see it.
+     */
+    public Opportunity requireVisible(UUID id) {
         Opportunity opportunity = opportunityRepository.findById(id)
                 .orElseThrow(() -> new ApiExceptions.NotFound("Fırsat bulunamadı: " + id));
         accessPolicy.requireVisible(opportunity.getOwnerUserId());
