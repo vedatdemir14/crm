@@ -34,4 +34,7 @@ public interface ActivityRepository extends JpaRepository<Activity, UUID> {
             """,
             countQuery = "SELECT COUNT(a) FROM Activity a WHERE a.opportunity.id = :opportunityId")
     Page<Activity> timelineOfOpportunity(@Param("opportunityId") UUID opportunityId, Pageable pageable);
+
+    /** FR-CRM-12: identity of an imported activity, so a repeated sync does not import it twice. */
+    boolean existsByExternalIdAndContactId(String externalId, UUID contactId);
 }

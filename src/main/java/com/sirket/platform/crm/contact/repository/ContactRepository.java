@@ -54,5 +54,12 @@ public interface ContactRepository extends JpaRepository<Contact, UUID> {
             """)
     List<Contact> findPotentialDuplicates(@Param("email") String email, @Param("phone") String phone);
 
+    /**
+     * FR-CRM-12: resolves message participants to contacts in a single query. Addresses are
+     * compared case-insensitively, so the caller passes them already lower-cased.
+     */
+    @Query("SELECT c FROM Contact c WHERE LOWER(c.email) IN :emails")
+    List<Contact> findByEmailInIgnoreCase(@Param("emails") List<String> emails);
+
     boolean existsByCompanyId(UUID companyId);
 }
