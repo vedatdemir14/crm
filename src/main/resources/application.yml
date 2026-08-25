@@ -55,6 +55,11 @@ app:
     lockout:
       max-failed-attempts: 5
       duration: PT15M
+    field-encryption:
+      # Base64 of a 32-byte AES key, supplied at runtime (openssl rand -base64 32).
+      # Unlike the JWT key there is no ephemeral fallback: regenerating this would make every
+      # already-encrypted row permanently unreadable, so a missing key fails startup instead.
+      key: ${FIELD_ENCRYPTION_KEY:}
 
 ---
 spring:
