@@ -1,6 +1,7 @@
 package com.sirket.platform.crm.contact.repository;
 
 import com.sirket.platform.crm.contact.domain.Contact;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
@@ -53,6 +54,9 @@ public interface ContactRepository extends JpaRepository<Contact, UUID> {
                OR (CAST(:phone AS String) IS NOT NULL AND c.phone = CAST(:phone AS String))
             """)
     List<Contact> findPotentialDuplicates(@Param("email") String email, @Param("phone") String phone);
+
+    /** Chunked read for the CSV export (FR-CRM-11); ordering keeps successive pages stable. */
+    Page<Contact> findByCreatedAtBetweenOrderByCreatedAtAsc(Instant from, Instant to, Pageable pageable);
 
     boolean existsByCompanyId(UUID companyId);
 }
