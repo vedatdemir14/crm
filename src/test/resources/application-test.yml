@@ -8,3 +8,10 @@ crm:
   # Tests invoke the reminder job directly rather than waiting on (or racing) the cron trigger.
   scheduling:
     enabled: false
+
+app:
+  security:
+    field-encryption:
+      # Fixed non-secret key for tests only. Production supplies FIELD_ENCRYPTION_KEY from the
+      # environment; this value exists so the suite is reproducible, never to protect anything.
+      key: VlzefcwTybbEaq3OzAkR1VMQcd/R3Z+onfL39LtDlUY=

@@ -1,5 +1,6 @@
 package com.sirket.platform.common.security;
 
+import com.sirket.platform.common.security.crypto.FieldEncryptionProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +17,7 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 
 @Configuration
 @EnableMethodSecurity
-@EnableConfigurationProperties(SecurityProperties.class)
+@EnableConfigurationProperties({ SecurityProperties.class, FieldEncryptionProperties.class })
 public class SecurityConfig {
 
     /**

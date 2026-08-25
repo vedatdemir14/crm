@@ -57,6 +57,8 @@ public abstract class IntegrationTestBase {
     void resetDatabase() {
         jdbcTemplate.execute("""
                 TRUNCATE TABLE
+                    hr.employees,
+                    hr.departments,
                     crm.activities,
                     crm.tasks,
                     common.notifications,
