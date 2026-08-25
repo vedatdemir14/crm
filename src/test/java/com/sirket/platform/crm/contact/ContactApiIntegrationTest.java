@@ -1,6 +1,5 @@
 package com.sirket.platform.crm.contact;
 
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -9,16 +8,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.sirket.platform.IntegrationTestBase;
-import com.sirket.platform.common.identity.domain.Role;
 import com.sirket.platform.common.identity.domain.User;
-import com.sirket.platform.common.identity.repository.RoleRepository;
-import com.sirket.platform.common.identity.repository.UserRepository;
 import com.sirket.platform.crm.contact.domain.Company;
 import com.sirket.platform.crm.contact.domain.Contact;
 import com.sirket.platform.crm.contact.repository.CompanyRepository;
 import com.sirket.platform.crm.contact.repository.ContactRepository;
-import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,11 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import tools.jackson.databind.ObjectMapper;
 
 @SpringBootTest
@@ -41,19 +31,10 @@ class ContactApiIntegrationTest extends IntegrationTestBase {
     private MockMvc mockMvc;
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
     private CompanyRepository companyRepository;
 
     @Autowired
     private ContactRepository contactRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -228,27 +209,6 @@ class ContactApiIntegrationTest extends IntegrationTestBase {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").value("VALIDATION_ERROR"))
                 .andExpect(jsonPath("$.fieldErrors[0].field").value("email"));
-    }
-
-    private User createUser(String username, String role) {
-        Role assigned = roleRepository.findByName(role).orElseThrow();
-        User user = new User(username, username + "@example.com", passwordEncoder.encode("test-password-1234"));
-        user.replaceRoles(Set.of(assigned));
-        return userRepository.save(user);
-    }
-
-    /**
-     * Builds the same JWT shape the auth endpoint issues: subject is the user id and roles live
-     * in a {@code roles} claim.
-     */
-    private RequestPostProcessor jwtFor(User user) {
-        List<String> roles = user.getRoles().stream().map(Role::getName).toList();
-        List<GrantedAuthority> authorities = roles.stream()
-                .map(role -> (GrantedAuthority) new SimpleGrantedAuthority(role))
-                .toList();
-        return jwt()
-                .jwt(token -> token.subject(user.getId().toString()).claim("roles", roles))
-                .authorities(authorities);
     }
 
     private record ContactBody(String firstName, String lastName, String email, String phone, String title,

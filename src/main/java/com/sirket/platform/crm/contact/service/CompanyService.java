@@ -1,6 +1,7 @@
 package com.sirket.platform.crm.contact.service;
 
 import com.sirket.platform.common.error.ApiExceptions;
+import com.sirket.platform.crm.access.CrmAccessPolicy;
 import com.sirket.platform.crm.contact.domain.Company;
 import com.sirket.platform.crm.contact.dto.CompanyDtos;
 import com.sirket.platform.crm.contact.repository.CompanyRepository;
@@ -68,13 +69,13 @@ public class CompanyService {
         companyRepository.delete(company);
     }
 
-    Company requireExisting(UUID id) {
-        return companyRepository.findById(id)
+    /**
+     * Exposed for other CRM packages that link a company onto their own records. Visibility is
+     * always checked, so a caller cannot attach — and thereby discover — a company they may not see.
+     */
+    public Company requireVisible(UUID id) {
+        Company company = companyRepository.findById(id)
                 .orElseThrow(() -> new ApiExceptions.NotFound("Firma bulunamadı: " + id));
-    }
-
-    private Company requireVisible(UUID id) {
-        Company company = requireExisting(id);
         accessPolicy.requireVisible(company.getOwnerUserId());
         return company;
     }
