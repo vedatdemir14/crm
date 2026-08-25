@@ -47,6 +47,13 @@ public class Activity {
     @Column(name = "occurred_at", nullable = false)
     private Instant occurredAt;
 
+    @Column(name = "external_id")
+    private String externalId;
+
+    /** Which external system this activity was imported from, or null when a user logged it. */
+    @Column(name = "external_source")
+    private String externalSource;
+
     @Column(name = "created_by", nullable = false)
     private UUID createdBy;
 
@@ -74,6 +81,22 @@ public class Activity {
         this.createdBy = createdBy;
         this.createdAt = Instant.now();
         this.updatedAt = this.createdAt;
+    }
+
+    /**
+     * FR-CRM-12: an activity reconstructed from an external mail or calendar message. It carries
+     * the originating id so a repeated sync recognises it instead of importing it twice.
+     */
+    public static Activity imported(ActivityType type, String subject, String description, Contact contact,
+            Instant occurredAt, UUID createdBy, String externalId, String externalSource) {
+        Activity activity = new Activity(type, subject, description, contact, null, occurredAt, createdBy);
+        activity.externalId = externalId;
+        activity.externalSource = externalSource;
+        return activity;
+    }
+
+    public boolean isImported() {
+        return externalSource != null;
     }
 
     public void update(ActivityType type, String subject, String description, Instant occurredAt) {
@@ -125,6 +148,14 @@ public class Activity {
 
     public Instant getOccurredAt() {
         return occurredAt;
+    }
+
+    public String getExternalId() {
+        return externalId;
+    }
+
+    public String getExternalSource() {
+        return externalSource;
     }
 
     public UUID getCreatedBy() {

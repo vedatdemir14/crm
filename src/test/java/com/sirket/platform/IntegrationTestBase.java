@@ -60,6 +60,7 @@ public abstract class IntegrationTestBase {
                     crm.activities,
                     crm.tasks,
                     common.notifications,
+                    common.integration_sync_state,
                     crm.opportunities,
                     crm.contacts,
                     crm.companies,

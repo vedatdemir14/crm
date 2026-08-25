@@ -58,5 +58,12 @@ public interface ContactRepository extends JpaRepository<Contact, UUID> {
     /** Chunked read for the CSV export (FR-CRM-11); ordering keeps successive pages stable. */
     Page<Contact> findByCreatedAtBetweenOrderByCreatedAtAsc(Instant from, Instant to, Pageable pageable);
 
+    /**
+     * FR-CRM-12: resolves message participants to contacts in a single query. Addresses are
+     * compared case-insensitively, so the caller passes them already lower-cased.
+     */
+    @Query("SELECT c FROM Contact c WHERE LOWER(c.email) IN :emails")
+    List<Contact> findByEmailInIgnoreCase(@Param("emails") List<String> emails);
+
     boolean existsByCompanyId(UUID companyId);
 }
